@@ -1,0 +1,18 @@
+import pandas as pd
+
+# Load the dataset
+file_path = r'C:\Users\LNV\downloads\country_vaccination_stats.csv'
+vaccination_data = pd.read_csv(file_path)
+
+# Calculate the minimum daily vaccinations per country
+min_vaccinations = vaccination_data.groupby('country')['daily_vaccinations'].min().fillna(0)
+
+# Fill missing values in daily_vaccinations with the minimum daily vaccinations of relevant countries
+# If a country has no valid vaccination data yet, set its value to 0
+vaccination_data['daily_vaccinations'] = vaccination_data.apply(
+    lambda row: min_vaccinations[row['country']] if pd.isna(row['daily_vaccinations']) else row['daily_vaccinations'],
+    axis=1
+)
+
+# Check the results
+print(vaccination_data.head())
